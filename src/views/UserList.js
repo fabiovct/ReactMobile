@@ -1,16 +1,22 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import {Alert, FlatList, Text, View } from 'react-native'
 import { ListItem, Avatar, Button, Icon } from 'react-native-elements'
 import users from '../data/users'
+import UsersContext from '../context/UsersContext'
 
 export default props => {
+   const {state, dispatch} = useContext(UsersContext)
+
 
     function confirmUserDeletion(user) {
         Alert.alert('Excluir Usuário','Deseja excluir o usuario'+user.id+'?',[
             {
                 text: 'Sim',
                 onPress(){
-                    console.warn('delete' + user.id)
+                    dispatch({
+                        type: "deleteUser",
+                        payload: user,
+                    })
                 }
             },
             {
@@ -45,7 +51,7 @@ function getActions(user){
             // bottomDivider
             // onPress={() => props.navigation.navigate('UserForm')}
             // />
-            <ListItem rightElement={getActions(item)} key={item.id} onPress={() => props.navigation.navigate('UserForm')} >
+            <ListItem rightElement={getActions(item)} key={item.id} onPress={() => props.navigation.navigate('UserForm',item)} >
                 <Avatar source={{uri: item.avatarUrl}} />
                 <ListItem.Title >{item.name}</ListItem.Title>
                 <ListItem.Subtitle>{item.email}</ListItem.Subtitle>
@@ -58,7 +64,7 @@ function getActions(user){
         <View>
             <FlatList
                 keyExtractor={user => user.id.toString()}
-                data={users}
+                data={state.users}
                 renderItem={getUserItem}
             />
         </View>
